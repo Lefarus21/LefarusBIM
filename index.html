@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lefarus Detailing — Machine Activation Portal</title>
+
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Official Machine Fingerprint & License Request Portal for Lefarus Detailing AutoCAD Plugin by Surafel Seyoum Demeke. Simply paste your hardware fingerprint and share with the manager for immediate activation.">
+    <meta name="author" content="Surafel Seyoum Demeke">
+
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            950: '#06080e',
+                            900: '#0b0f19',
+                            850: '#101624',
+                            800: '#151e30',
+                            700: '#1e2b45',
+                        },
+                        blueprint: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        cyberCyan: {
+                            DEFAULT: '#06b6d4',
+                            light: '#22d3ee',
+                            glow: 'rgba(6, 182, 212, 0.4)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'Consolas', 'Courier New', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #06080e;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing gradient mesh background */
+        .bg-ambient-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 65%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 20% 85%, rgba(14, 165, 233, 0.07) 0%, transparent 45%);
+        }
+
+        /* CAD Architectural Grid pattern */
+        .bg-grid-cad {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 16px 36px -10px rgba(0, 0, 0, 0.65);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(56, 189, 248, 0.35);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 20px 44px -10px rgba(14, 165, 233, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #06080e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #0ea5e9, #0369a1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+
+        #toast {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-obsidian-950 text-slate-100 min-h-screen relative antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- Ambient Glow & Background Grid -->
+    <div class="bg-ambient-mesh"></div>
+    <div class="fixed inset-0 bg-grid-cad pointer-events-none z-0"></div>
+
+    <!-- MAIN WRAPPER -->
+    <div class="relative z-10 min-h-screen flex flex-col justify-between">
+
+        <!-- TOP NAVIGATION BAR -->
+        <header class="border-b border-slate-800/80 bg-obsidian-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3.5">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-400/40">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg text-slate-100 tracking-tight">LEFARUS DETAILING</span>
+                            <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/60 font-semibold tracking-wider">Client Portal</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono">AutoCAD Structural Plugin Activation</p>
+                    </div>
+                </div>
+
+                <!-- Right Contact Badge -->
+                <div class="flex items-center gap-3">
+                    <a href="tel:+251913682280" class="flex items-center gap-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 px-3.5 py-2 rounded-lg bg-emerald-950/40 border border-emerald-800/50 transition">
+                        <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                        <span>Manager: +251 913 682280</span>
+                    </a>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+            <!-- HERO HEADER -->
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-4">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>Direct Workstation Activation Request</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-100 tracking-tight leading-tight">
+                    Machine Fingerprint <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">Sharing Portal</span>
+                </h1>
+                <p class="mt-3 text-sm sm:text-base text-slate-400 leading-relaxed">
+                    Paste your 64-character machine fingerprint copied from AutoCAD, confirm your 8-chunk grid, and share it with manager <strong class="text-slate-200">Surafel Seyoum Demeke</strong> for instant activation.
+                </p>
+            </div>
+
+            <!-- 3 EASY STEPS BANNER -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="glass-panel rounded-xl p-4 flex items-start gap-3 border-l-4 border-l-cyan-500">
+                    <div class="w-7 h-7 rounded-lg bg-cyan-950/80 text-cyan-400 border border-cyan-800 flex items-center justify-center font-mono font-bold text-xs shrink-0">1</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">Run AutoCAD Command</h4>
+                        <p class="text-xs text-slate-400 mt-1">When prompted, click <span class="text-cyan-300 font-semibold font-mono">"OK"</span> in AutoCAD to copy your machine fingerprint.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl p-4 flex items-start gap-3 border-l-4 border-l-sky-500">
+                    <div class="w-7 h-7 rounded-lg bg-sky-950/80 text-sky-400 border border-sky-800 flex items-center justify-center font-mono font-bold text-xs shrink-0">2</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">Paste Fingerprint Below</h4>
+                        <p class="text-xs text-slate-400 mt-1">Paste below. The portal auto-cleans and displays the 8 chunks matching your AutoCAD screen.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl p-4 flex items-start gap-3 border-l-4 border-l-emerald-500">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-800 flex items-center justify-center font-mono font-bold text-xs shrink-0">3</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">Share with Manager</h4>
+                        <p class="text-xs text-slate-400 mt-1">One-click send via WhatsApp, Telegram, or Email for immediate license activation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN HASH INPUT & 8-CHUNK GRID -->
+            <div class="space-y-8">
+
+                <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2.5">
+                                <i data-lucide="key" class="w-5 h-5 text-cyan-400"></i>
+                                <span>Paste Your Machine Fingerprint</span>
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-1">Paste the 64-character SHA-256 fingerprint generated by Lefarus Detailing</p>
+                        </div>
+
+                        <!-- Action helper buttons -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button onclick="readFromClipboard()" class="flex-1 sm:flex-none px-3.5 py-2 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800/80 hover:border-cyan-600 text-xs font-mono transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+                                <span>Paste from Clipboard</span>
+                            </button>
+                            <button onclick="clearHashInput()" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 text-xs font-mono transition flex items-center gap-1">
+                                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                                <span>Clear</span>
+                            </button>
+                            <button onclick="loadDemoHash()" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 hover:text-cyan-300 border border-slate-800 text-xs font-mono transition flex items-center gap-1" title="Load sample workstation hash">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                <span>Sample</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hash Input Box -->
+                    <div class="mt-6">
+                        <label for="hash-input" class="block text-xs font-mono text-slate-300 mb-2 flex items-center justify-between">
+                            <span>MACHINE FINGERPRINT (64 HEX CHARACTERS)</span>
+                            <span id="char-counter" class="text-cyan-400 font-semibold font-mono text-xs">0 / 64 characters</span>
+                        </label>
+                        <div class="relative">
+                            <textarea 
+                                id="hash-input" 
+                                rows="2" 
+                                placeholder="Paste your 64-character machine fingerprint here (e.g. 437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564)..." 
+                                class="w-full px-4 py-3.5 rounded-xl bg-obsidian-900/90 border border-slate-700/80 text-cyan-300 font-mono text-sm tracking-wider focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 transition placeholder:text-slate-600 resize-none uppercase"
+                                oninput="handleHashChange()"
+                            ></textarea>
+                        </div>
+
+                        <!-- Progress & Status bar -->
+                        <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                            <div id="validation-badge" class="flex items-center gap-1.5 text-slate-400">
+                                <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+                                <span>Waiting for machine fingerprint input...</span>
+                            </div>
+                            <span id="validation-indicator" class="text-slate-500">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-1.5 rounded-full mt-1.5 overflow-hidden border border-slate-800">
+                            <div id="validation-progress" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- 8-CHUNK VISUAL FINGERPRINT GRID (Matching AutoCAD Dialog) -->
+                    <div class="mt-8 pt-6 border-t border-slate-800/80">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="layout-grid" class="w-4 h-4 text-cyan-400"></i>
+                                <h3 class="text-xs font-mono uppercase tracking-wider text-slate-300 font-semibold">AutoCAD 8-Chunk Inspection Grid (4 × 2)</h3>
+                            </div>
+                            <span class="text-[11px] font-mono text-slate-500">Verify this matches the 8 boxes on your AutoCAD dialog</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3.5 rounded-xl bg-obsidian-900/90 border border-slate-800" id="chunks-container">
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-0">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-1">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-2">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-3">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-4">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-5">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-6">--------</div>
+                            <div class="chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-500 select-all" id="chunk-7">--------</div>
+                        </div>
+                    </div>
+
+                    <!-- CLIENT METADATA INPUTS -->
+                    <div class="mt-8 pt-6 border-t border-slate-800/80">
+                        <h3 class="text-xs font-mono uppercase tracking-wider text-slate-300 font-semibold mb-4 flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-4 h-4 text-cyan-400"></i>
+                            <span>Your Workstation & Contact Details (Optional)</span>
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div>
+                                <label for="client-name" class="block text-xs font-mono text-slate-400 mb-1.5">Your Full Name / Engineer</label>
+                                <input type="text" id="client-name" placeholder="e.g. John Doe" oninput="updateSharingLinks()" class="w-full px-3.5 py-2.5 rounded-lg bg-obsidian-900 border border-slate-700/80 text-slate-200 text-sm focus:outline-none focus:border-cyan-400 font-sans transition">
+                            </div>
+
+                            <div>
+                                <label for="client-company" class="block text-xs font-mono text-slate-400 mb-1.5">Company / Engineering Office</label>
+                                <input type="text" id="client-company" placeholder="e.g. Acme Engineering PLC" oninput="updateSharingLinks()" class="w-full px-3.5 py-2.5 rounded-lg bg-obsidian-900 border border-slate-700/80 text-slate-200 text-sm focus:outline-none focus:border-cyan-400 font-sans transition">
+                            </div>
+
+                            <div>
+                                <label for="client-pc" class="block text-xs font-mono text-slate-400 mb-1.5">Workstation Name / Tag</label>
+                                <input type="text" id="client-pc" placeholder="e.g. Drafting-PC-01" oninput="updateSharingLinks()" class="w-full px-3.5 py-2.5 rounded-lg bg-obsidian-900 border border-slate-700/80 text-slate-200 text-sm focus:outline-none focus:border-cyan-400 font-sans transition">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- INSTANT SHARING ACTION GRID -->
+                <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 text-xs font-mono mb-1.5 font-semibold">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                                <span>Website Manager Direct Contact</span>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-100">Send to Website Manager for Activation</h2>
+                            <p class="text-xs text-slate-400 mt-1">Select your preferred communication channel to send your fingerprint directly to <strong class="text-slate-200">Surafel Seyoum Demeke</strong>.</p>
+                        </div>
+
+                        <!-- Manager Card Badge -->
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-obsidian-900 border border-slate-800 shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-white text-sm shadow-md">
+                                SD
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-200">Surafel Seyoum Demeke</p>
+                                <p class="text-[11px] text-cyan-400 font-mono">Website & Plugin Manager</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                        
+                        <!-- 1. WhatsApp Button -->
+                        <a id="share-whatsapp-btn" href="https://wa.me/251913682280" target="_blank" class="p-4 rounded-xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border border-emerald-800/60 hover:border-emerald-500/80 transition group flex items-center justify-between shadow-lg shadow-emerald-950/30 glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 group-hover:scale-105 transition">
+                                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-emerald-400 transition">Share via WhatsApp</h4>
+                                    <p class="text-xs text-slate-400 font-mono">+251 913 682280</p>
+                                </div>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition"></i>
+                        </a>
+
+                        <!-- 2. Telegram Button -->
+                        <a id="share-telegram-btn" href="https://t.me/Surasyoume" target="_blank" class="p-4 rounded-xl bg-gradient-to-br from-sky-950/80 to-slate-900 border border-sky-800/60 hover:border-sky-500/80 transition group flex items-center justify-between shadow-lg shadow-sky-950/30 glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-md shadow-sky-500/30 group-hover:scale-105 transition">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-sky-400 transition">Share via Telegram</h4>
+                                    <p class="text-xs text-slate-400 font-mono">@Surasyoume</p>
+                                </div>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-sky-400 transition"></i>
+                        </a>
+
+                        <!-- 3. Email Button -->
+                        <a id="share-email-btn" href="mailto:lefarus2119@gmail.com" class="p-4 rounded-xl bg-gradient-to-br from-cyan-950/80 to-slate-900 border border-cyan-800/60 hover:border-cyan-500/80 transition group flex items-center justify-between shadow-lg shadow-cyan-950/30 glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-cyan-600 text-white flex items-center justify-center shadow-md shadow-cyan-600/30 group-hover:scale-105 transition">
+                                    <i data-lucide="mail" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-cyan-400 transition">Send via Email</h4>
+                                    <p class="text-xs text-slate-400 font-mono">lefarus2119@gmail.com</p>
+                                </div>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition"></i>
+                        </a>
+
+                        <!-- 4. Copy Formatted Text -->
+                        <button onclick="copyFormattedMessage()" class="p-4 rounded-xl bg-gradient-to-br from-indigo-950/70 to-slate-900 border border-indigo-800/60 hover:border-indigo-500/80 transition group flex items-center justify-between shadow-lg shadow-indigo-950/30 text-left glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-600/30 group-hover:scale-105 transition">
+                                    <i data-lucide="copy" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">Copy Formatted Text</h4>
+                                    <p class="text-xs text-slate-400 font-mono">Paste into any chat</p>
+                                </div>
+                            </div>
+                            <i data-lucide="clipboard" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition"></i>
+                        </button>
+
+                        <!-- 5. Generate Share Link -->
+                        <button onclick="copyShareableUrl()" class="p-4 rounded-xl bg-gradient-to-br from-amber-950/70 to-slate-900 border border-amber-800/60 hover:border-amber-500/80 transition group flex items-center justify-between shadow-lg shadow-amber-950/30 text-left glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 group-hover:scale-105 transition">
+                                    <i data-lucide="link" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-amber-400 transition">Copy Share Link</h4>
+                                    <p class="text-xs text-slate-400 font-mono">Permlink with your hash</p>
+                                </div>
+                            </div>
+                            <i data-lucide="share-2" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
+                        </button>
+
+                        <!-- 6. Download Request File -->
+                        <button onclick="downloadRequestFile()" class="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-obsidian-900 border border-slate-700/80 hover:border-slate-500 transition group flex items-center justify-between shadow-lg text-left glass-panel-hover">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-slate-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                                    <i data-lucide="download" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-100 group-hover:text-slate-200 transition">Download Request TXT</h4>
+                                    <p class="text-xs text-slate-400 font-mono">lefarusBIM_Request.txt</p>
+                                </div>
+                            </div>
+                            <i data-lucide="file-text" class="w-4 h-4 text-slate-500 group-hover:text-slate-200 transition"></i>
+                        </button>
+
+                    </div>
+
+                    <!-- Message Preview Box -->
+                    <div class="mt-6 pt-5 border-t border-slate-800/80">
+                        <label class="block text-xs font-mono text-slate-400 mb-2 flex items-center justify-between">
+                            <span>MESSAGE PREVIEW SENT TO MANAGER</span>
+                            <span class="text-slate-500">Auto-formatted</span>
+                        </label>
+                        <pre id="message-preview" class="p-4 rounded-xl bg-obsidian-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed select-all">Please paste your machine fingerprint above to preview the shareable message.</pre>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FAQ & HELP SECTION -->
+            <div class="mt-12 glass-panel rounded-2xl p-6 sm:p-8">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2 mb-4">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-cyan-400"></i>
+                    <span>Frequently Asked Questions & Instructions</span>
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs leading-relaxed text-slate-400">
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-sm">Where do I find my Machine Fingerprint?</h4>
+                        <p>When running any Lefarus Detailing command in AutoCAD without an active license, a security dialog appears titled <span class="text-cyan-300 font-mono font-medium">"Lefarus Detailing - License Activation"</span>. Click <span class="text-cyan-300 font-mono font-medium">"OK"</span> to automatically copy your 64-character fingerprint to your clipboard.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-sm">What happens after I share my fingerprint?</h4>
+                        <p>Website Manager Surafel Seyoum Demeke will add your workstation to the whitelist or send you your signed license file (<span class="text-cyan-300 font-mono font-medium">lefarusBIM.lic</span>).</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-sm">Where do I place my license file?</h4>
+                        <p>If you receive a <span class="text-cyan-300 font-mono font-medium">lefarusBIM.lic</span> file, copy it directly into your AutoCAD plugin bundle directory:
+                        <br><code class="text-[11px] text-cyan-300 font-mono bg-obsidian-950 px-2 py-1 rounded inline-block mt-1 select-all">C:\ProgramData\Autodesk\ApplicationPlugins\LefarusDetailing.bundle\Contents\</code></p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-sm">Does changing Wi-Fi or networks invalidate the license?</h4>
+                        <p>No. Lefarus Detailing multi-factor hardware fingerprinting locks onto your Motherboard, BIOS UUID, CPU ID, and Disk Serial with OEM placeholder filtering for high stability across normal network changes.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-16 border-t border-slate-800/80 bg-obsidian-950 py-8 text-center text-xs font-mono text-slate-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Lefarus Detailing Activation Service</span>
+                </div>
+                <div>
+                    <p>© 2026 Surafel Seyoum Demeke. All rights reserved.</p>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Structural & Architectural BIM Modeler | Addis Ababa, Ethiopia</p>
+                </div>
+                <div class="flex items-center gap-4 text-slate-400">
+                    <a href="https://t.me/Surasyoume" target="_blank" class="hover:text-cyan-400 transition flex items-center gap-1">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i> Telegram
+                    </a>
+                    <a href="mailto:lefarus2119@gmail.com" class="hover:text-cyan-400 transition flex items-center gap-1">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i> Email
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION POPUP -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-xl bg-obsidian-900 border border-cyan-500/50 text-slate-100 shadow-2xl shadow-cyan-950/60 font-mono text-xs">
+        <div class="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-700">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+        </div>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let currentHash = '';
+
+        // Manager Contact Details
+        const MANAGER_PHONE = "251913682280";
+        const MANAGER_TELEGRAM = "Surasyoume";
+        const MANAGER_EMAIL = "lefarus2119@gmail.com";
+        const MANAGER_NAME = "Surafel Seyoum Demeke";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Load query parameters if sent via link
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramHash = urlParams.get('hash') || urlParams.get('machinehash') || urlParams.get('m');
+            const paramClient = urlParams.get('client') || urlParams.get('user') || urlParams.get('name');
+            const paramCompany = urlParams.get('company') || urlParams.get('org');
+            const paramPc = urlParams.get('pc') || urlParams.get('workstation');
+
+            if (paramClient) document.getElementById('client-name').value = paramClient;
+            if (paramCompany) document.getElementById('client-company').value = paramCompany;
+            if (paramPc) document.getElementById('client-pc').value = paramPc;
+
+            if (paramHash) {
+                document.getElementById('hash-input').value = paramHash;
+                handleHashChange();
+                showToast("Machine fingerprint loaded from link!");
+            }
+        });
+
+        function sanitizeHash(input) {
+            if (!input) return '';
+            return input
+                .replace(/\/\/.*$/gm, '')
+                .replace(/["',;\{\}\(\)]/g, '')
+                .replace(/[\s\r\n\t\-]/g, '')
+                .toUpperCase();
+        }
+
+        function handleHashChange() {
+            const rawVal = document.getElementById('hash-input').value;
+            const cleaned = sanitizeHash(rawVal);
+            currentHash = cleaned;
+
+            // Character counter
+            const counter = document.getElementById('char-counter');
+            counter.textContent = `${cleaned.length} / 64 characters`;
+
+            // Progress bar
+            const pct = Math.min(100, Math.round((cleaned.length / 64) * 100));
+            document.getElementById('validation-progress').style.width = `${pct}%`;
+            document.getElementById('validation-indicator').textContent = `${pct}%`;
+
+            // Validation status
+            const badge = document.getElementById('validation-badge');
+            const isHex = /^[0-9A-F]*$/.test(cleaned);
+
+            if (cleaned.length === 0) {
+                badge.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-slate-500"></i><span>Waiting for machine fingerprint input...</span>`;
+                badge.className = "flex items-center gap-1.5 text-slate-400";
+            } else if (!isHex) {
+                badge.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i><span>Invalid characters detected! Only hex (0-9, A-F) allowed.</span>`;
+                badge.className = "flex items-center gap-1.5 text-rose-400";
+            } else if (cleaned.length < 64) {
+                badge.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-amber-400"></i><span>Incomplete fingerprint (${64 - cleaned.length} more characters needed)</span>`;
+                badge.className = "flex items-center gap-1.5 text-amber-400";
+            } else if (cleaned.length === 64) {
+                badge.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i><span class="font-bold text-emerald-400">Valid 64-character SHA-256 Machine Fingerprint</span>`;
+                badge.className = "flex items-center gap-1.5 text-emerald-400";
+            } else {
+                badge.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>Fingerprint is too long (${cleaned.length} chars, expected 64).</span>`;
+                badge.className = "flex items-center gap-1.5 text-rose-400";
+            }
+
+            updateChunkBoxes(cleaned);
+            updateSharingLinks();
+            lucide.createIcons();
+        }
+
+        function updateChunkBoxes(hashStr) {
+            for (let i = 0; i < 8; i++) {
+                const chunkEl = document.getElementById(`chunk-${i}`);
+                const start = i * 8;
+                if (hashStr && start < hashStr.length) {
+                    const chunk = hashStr.substring(start, start + 8);
+                    chunkEl.textContent = chunk.padEnd(8, '·');
+                    if (chunk.length === 8) {
+                        chunkEl.className = "chunk-box p-3 rounded-lg bg-obsidian-950 border border-cyan-500/60 text-center font-mono text-xs sm:text-sm font-bold tracking-wider text-cyan-300 shadow-sm shadow-cyan-500/10 select-all transition";
+                    } else {
+                        chunkEl.className = "chunk-box p-3 rounded-lg bg-obsidian-950 border border-amber-500/50 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-amber-300 select-all transition";
+                    }
+                } else {
+                    chunkEl.textContent = '--------';
+                    chunkEl.className = "chunk-box p-3 rounded-lg bg-obsidian-950 border border-slate-800 text-center font-mono text-xs sm:text-sm font-semibold tracking-wider text-slate-600 select-all transition";
+                }
+            }
+        }
+
+        function updateSharingLinks() {
+            const hash = currentHash ? currentHash.substring(0, 64) : '';
+            const clientName = document.getElementById('client-name').value.trim() || 'Client User';
+            const company = document.getElementById('client-company').value.trim();
+            const pcName = document.getElementById('client-pc').value.trim();
+
+            const companyLine = company ? `\n🏢 Company: ${company}` : '';
+            const pcLine = pcName ? `\n💻 Workstation: ${pcName}` : '';
+
+            const messageBody = 
+`Hello Surafel,
+
+I would like to request Lefarus Detailing AutoCAD Plugin activation for my workstation.
+
+👤 Name: ${clientName}${companyLine}${pcLine}
+🔑 Machine Fingerprint:
+${hash || '[PASTE HASH HERE]'}
+
+Please add this machine to the authorized whitelist or send the lefarusBIM.lic license file.
+
+Thank you!`;
+
+            document.getElementById('message-preview').textContent = messageBody;
+
+            // WhatsApp link
+            const waText = encodeURIComponent(messageBody);
+            document.getElementById('share-whatsapp-btn').href = `https://wa.me/${MANAGER_PHONE}?text=${waText}`;
+
+            // Telegram link
+            const tgText = encodeURIComponent(messageBody);
+            document.getElementById('share-telegram-btn').href = `https://t.me/${MANAGER_TELEGRAM}?text=${tgText}`;
+
+            // Email link
+            const subject = encodeURIComponent(`Lefarus Detailing Activation Request — ${clientName}${company ? ` (${company})` : ''}`);
+            const mailtoBody = encodeURIComponent(messageBody);
+            document.getElementById('share-email-btn').href = `mailto:${MANAGER_EMAIL}?subject=${subject}&body=${mailtoBody}`;
+        }
+
+        function copyFormattedMessage() {
+            const text = document.getElementById('message-preview').textContent;
+            copyToClipboardText(text, "Formatted message copied to clipboard!");
+        }
+
+        function copyShareableUrl() {
+            const hash = currentHash ? currentHash.substring(0, 64) : '';
+            const clientName = document.getElementById('client-name').value.trim();
+            const company = document.getElementById('client-company').value.trim();
+            const pcName = document.getElementById('client-pc').value.trim();
+
+            const url = new URL(window.location.href);
+            if (hash) url.searchParams.set('hash', hash);
+            if (clientName) url.searchParams.set('client', clientName);
+            if (company) url.searchParams.set('company', company);
+            if (pcName) url.searchParams.set('pc', pcName);
+
+            copyToClipboardText(url.toString(), "Direct share link with fingerprint copied!");
+        }
+
+        function downloadRequestFile() {
+            const hash = currentHash ? currentHash.substring(0, 64) : '';
+            if (!hash) {
+                showToast("Please paste a machine fingerprint first!", true);
+                return;
+            }
+            const clientName = document.getElementById('client-name').value.trim() || 'Client User';
+            const company = document.getElementById('client-company').value.trim() || 'N/A';
+            const pcName = document.getElementById('client-pc').value.trim() || 'Workstation';
+
+            const content = 
+`============================================================
+LEFARUS DETAILING - MACHINE LICENSE ACTIVATION REQUEST
+============================================================
+Generated: ${new Date().toUTCString()}
+Client:    ${clientName}
+Company:   ${company}
+Machine:   ${pcName}
+------------------------------------------------------------
+MACHINE FINGERPRINT:
+${hash}
+------------------------------------------------------------
+Deliver this file or hash to Surafel Seyoum Demeke (lefarus2119@gmail.com / Telegram @Surasyoume).
+============================================================`;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'lefarusBIM_Request.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("lefarusBIM_Request.txt downloaded!");
+        }
+
+        async function readFromClipboard() {
+            try {
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                        document.getElementById('hash-input').value = text;
+                        handleHashChange();
+                        showToast("Pasted from clipboard!");
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Clipboard read error:', err);
+            }
+            const pasted = prompt("Paste your 64-character Machine Fingerprint here:");
+            if (pasted) {
+                document.getElementById('hash-input').value = pasted;
+                handleHashChange();
+                showToast("Machine fingerprint loaded!");
+            }
+        }
+
+        function clearHashInput() {
+            document.getElementById('hash-input').value = '';
+            handleHashChange();
+            showToast("Input cleared");
+        }
+
+        function loadDemoHash() {
+            document.getElementById('hash-input').value = "437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564";
+            document.getElementById('client-name').value = "Sample CAD Workstation";
+            document.getElementById('client-company').value = "Structural Engineering Dept";
+            document.getElementById('client-pc').value = "BIM-Workstation-01";
+            handleHashChange();
+            showToast("Demo workstation fingerprint loaded!");
+        }
+
+        function copyToClipboardText(text, successMsg = "Copied to clipboard!") {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showToast(successMsg))
+                    .catch(() => fallbackCopy(text, successMsg));
+            } else {
+                fallbackCopy(text, successMsg);
+            }
+        }
+
+        function fallbackCopy(text, successMsg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (err) {
+                console.error(err);
+            }
+            document.body.removeChild(ta);
+        }
+
+        let toastTimer = null;
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            if (!toast || !msgEl) return;
+
+            msgEl.textContent = message;
+            if (isError) {
+                toast.classList.add('border-rose-500/70');
+                toast.classList.remove('border-cyan-500/50');
+            } else {
+                toast.classList.remove('border-rose-500/70');
+                toast.classList.add('border-cyan-500/50');
+            }
+
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

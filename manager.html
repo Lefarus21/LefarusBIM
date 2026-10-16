@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lefarus Detailing — Website Manager Studio & License Generator</title>
+
+    <!-- Meta: Private Admin Portal -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Surafel Seyoum Demeke">
+
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            950: '#06080e',
+                            900: '#0b0f19',
+                            850: '#101624',
+                            800: '#151e30',
+                            700: '#1e2b45',
+                        },
+                        amberGold: {
+                            DEFAULT: '#f59e0b',
+                            light: '#fbbf24',
+                            glow: 'rgba(245, 158, 11, 0.4)',
+                        },
+                        cyberCyan: {
+                            DEFAULT: '#06b6d4',
+                            light: '#22d3ee',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'Consolas', 'Courier New', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #06080e;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-ambient-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(14, 165, 233, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 65%, rgba(217, 119, 6, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 20% 85%, rgba(99, 102, 241, 0.06) 0%, transparent 45%);
+        }
+
+        .bg-grid-cad {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(245, 158, 11, 0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(245, 158, 11, 0.035) 1px, transparent 1px);
+        }
+
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 16px 36px -10px rgba(0, 0, 0, 0.65);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #06080e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #f59e0b, #b45309);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fbbf24;
+        }
+
+        #toast {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-obsidian-950 text-slate-100 min-h-screen relative antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+    <div class="bg-ambient-mesh"></div>
+    <div class="fixed inset-0 bg-grid-cad pointer-events-none z-0"></div>
+
+    <div class="relative z-10 min-h-screen flex flex-col justify-between">
+
+        <!-- HEADER -->
+        <header class="border-b border-slate-800/80 bg-obsidian-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3.5">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-400/40">
+                        <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg text-slate-100 tracking-tight">LEFARUS DETAILING</span>
+                            <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-400 border border-amber-800/60 font-semibold tracking-wider">Manager Studio</span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-mono">Private Whitelist & RSA License Administration</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="index.html" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition flex items-center gap-1.5 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span>Client Submission Portal</span>
+                    </a>
+                    <button onclick="lockManagerStudio()" class="p-2 rounded-lg bg-slate-900 text-slate-400 hover:text-amber-400 border border-slate-800 transition" title="Lock Studio">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- SECURITY PIN MODAL (OPTIONAL LOCK) -->
+        <div id="pin-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+            <div class="glass-panel max-w-sm w-full rounded-2xl p-6 text-center border border-amber-500/40 shadow-2xl">
+                <div class="w-12 h-12 rounded-xl bg-amber-950 text-amber-400 border border-amber-800 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="key-round" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-100">Manager Authentication</h3>
+                <p class="text-xs text-slate-400 mt-1 mb-4">Enter your 4-digit PIN to access the manager tools (Default: <span class="font-mono text-amber-300">2119</span>)</p>
+                
+                <input type="password" id="pin-input" maxlength="8" placeholder="PIN" class="w-full text-center text-lg tracking-widest font-mono py-2.5 rounded-lg bg-obsidian-950 border border-slate-700 text-amber-400 focus:outline-none focus:border-amber-400 mb-4">
+                
+                <div class="flex gap-2">
+                    <button onclick="verifyPin()" class="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-semibold text-xs font-mono transition">Unlock Studio</button>
+                    <a href="index.html" class="py-2.5 px-4 rounded-lg bg-slate-900 text-slate-400 text-xs font-mono border border-slate-800">Cancel</a>
+                </div>
+                <p id="pin-error" class="text-xs text-rose-400 font-mono mt-2 hidden">Incorrect PIN. Try again.</p>
+            </div>
+        </div>
+
+        <!-- MAIN MANAGER BODY -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+            <!-- INTRO BANNER -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 border-l-4 border-l-amber-500 shadow-2xl mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-950/80 border border-amber-800 text-amber-400 text-xs font-mono font-semibold mb-2">
+                            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                            <span>Website Manager: Surafel Seyoum Demeke</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-100">
+                            C# Whitelist & RSA License Generator Studio
+                        </h1>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Convert incoming client machine fingerprints into C# whitelist arrays or signed PowerShell digital licenses with one click.
+                        </p>
+                    </div>
+
+                    <!-- Fast Actions -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="pasteFromClipboard()" class="px-3.5 py-2 rounded-lg bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-800 text-xs font-mono transition flex items-center gap-1.5">
+                            <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+                            <span>Paste Client Hash</span>
+                        </button>
+                        <button onclick="clearAll()" class="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 text-xs font-mono border border-slate-800 transition">
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CORE INPUT PANEL -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl mb-8">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2 mb-4">
+                    <i data-lucide="cpu" class="w-5 h-5 text-amber-400"></i>
+                    <span>Target Workstation Hardware Fingerprint</span>
+                </h3>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Hash input -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div>
+                            <label for="hash-input" class="block text-xs font-mono text-slate-300 mb-1 flex items-center justify-between">
+                                <span>CLIENT MACHINE HASH (64 HEX CHARACTERS)</span>
+                                <span id="char-counter" class="text-amber-400 font-mono text-xs">0 / 64 characters</span>
+                            </label>
+                            <textarea 
+                                id="hash-input" 
+                                rows="2" 
+                                placeholder="Paste 64-character machine fingerprint received from client..."
+                                class="w-full px-4 py-3 rounded-xl bg-obsidian-950 border border-slate-700 text-amber-300 font-mono text-xs tracking-wider focus:outline-none focus:border-amber-400 transition placeholder:text-slate-600 resize-none uppercase"
+                                oninput="handleHashChange()"
+                            ></textarea>
+                        </div>
+
+                        <!-- 8 Chunks Display (To verify client screenshots) -->
+                        <div>
+                            <span class="block text-[11px] font-mono text-slate-400 uppercase mb-2">Visual 8-Chunk Verification (Matches Client AutoCAD Dialog):</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-obsidian-950 border border-slate-800" id="chunks-grid">
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-0">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-1">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-2">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-3">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-4">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-5">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-6">--------</div>
+                                <div class="p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-500" id="chunk-7">--------</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Metadata & Expiry -->
+                    <div class="lg:col-span-4 space-y-3 p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400 mb-1">Client / Company Name</label>
+                            <input type="text" id="client-name" placeholder="e.g. Bole Engineering PLC" oninput="updateAllOutputs()" class="w-full px-3 py-2 rounded-lg bg-obsidian-900 border border-slate-700 text-slate-200 text-xs font-mono focus:border-amber-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400 mb-1">Workstation Tag / User</label>
+                            <input type="text" id="pc-tag" placeholder="e.g. Workstation 02 (Abebe)" oninput="updateAllOutputs()" class="w-full px-3 py-2 rounded-lg bg-obsidian-900 border border-slate-700 text-slate-200 text-xs font-mono focus:border-amber-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400 mb-1">License Expiry</label>
+                            <select id="expiry-select" onchange="updateAllOutputs()" class="w-full px-3 py-2 rounded-lg bg-obsidian-900 border border-slate-700 text-slate-200 text-xs font-mono focus:border-amber-400">
+                                <option value="PERPETUAL" selected>Perpetual (No Expiration)</option>
+                                <option value="2027-12-31">End of 2027 (2027-12-31)</option>
+                                <option value="2028-12-31">End of 2028 (2028-12-31)</option>
+                                <option value="2026-12-31">End of 2026 (2026-12-31)</option>
+                            </select>
+                        </div>
+
+                        <button onclick="saveActiveWorkstation()" class="w-full py-2 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 text-xs font-mono font-semibold transition flex items-center justify-center gap-1.5 mt-2">
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            <span>Save to Local Database</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTPUT SECTION 1: C# BuiltInAllowedMachineHashes -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl mb-8">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                            <i data-lucide="code-2" class="w-5 h-5 text-cyan-400"></i>
+                            <span>1. C# `BuiltInAllowedMachineHashes` Code Snippet</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Paste into <span class="font-mono text-cyan-300">FootingCommandSecurity.cs</span>, <span class="font-mono text-cyan-300">StairCommandSecurity.cs</span>, <span class="font-mono text-cyan-300">BeamCommandSecurity.cs</span>, <span class="font-mono text-cyan-300">ColumnCommandSecurity.cs</span></p>
+                    </div>
+                    <button onclick="copyText('csharp-line-output', 'C# line copied!')" class="px-3.5 py-1.5 rounded-lg bg-cyan-950 text-cyan-300 hover:bg-cyan-900 border border-cyan-800 text-xs font-mono transition flex items-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span>Copy Line</span>
+                    </button>
+                </div>
+
+                <div class="mt-4">
+                    <pre id="csharp-line-output" class="p-3.5 rounded-xl bg-obsidian-950 border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed select-all">"437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564", // Authorized Workstation</pre>
+                </div>
+
+                <!-- Full HashSet Block -->
+                <div class="mt-6 pt-4 border-t border-slate-800/80">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-mono text-slate-400 font-semibold uppercase">Complete BuiltInAllowedMachineHashes HashSet Block</span>
+                        <button onclick="copyText('full-hashset-output', 'Full HashSet block copied!')" class="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3 h-3"></i> Copy Entire Block
+                        </button>
+                    </div>
+                    <pre id="full-hashset-output" class="p-4 rounded-xl bg-obsidian-950 border border-slate-800 font-mono text-[11px] text-cyan-300 overflow-x-auto leading-relaxed select-all">
+private static readonly HashSet&lt;string&gt; BuiltInAllowedMachineHashes = new HashSet&lt;string&gt;(StringComparer.OrdinalIgnoreCase)
+{
+    "437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564" // Current Authorized Workstation
+};</pre>
+                </div>
+            </div>
+
+            <!-- OUTPUT SECTION 2: PowerShell License Generator Command -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl mb-8">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-5 h-5 text-amber-400"></i>
+                            <span>2. PowerShell Digital License Generator (`GenerateLicense.ps1`)</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Run in PowerShell inside <span class="font-mono text-amber-300 text-[11px]">BeamElevationPlugin\LicenseTools</span></p>
+                    </div>
+                    <button onclick="copyText('powershell-cmd-output', 'PowerShell command copied!')" class="px-3.5 py-1.5 rounded-lg bg-amber-950 text-amber-300 hover:bg-amber-900 border border-amber-800 text-xs font-mono transition flex items-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span>Copy PowerShell</span>
+                    </button>
+                </div>
+
+                <div class="mt-4">
+                    <pre id="powershell-cmd-output" class="p-3.5 rounded-xl bg-obsidian-950 border border-slate-800 font-mono text-xs text-amber-300 overflow-x-auto leading-relaxed select-all">.\GenerateLicense.ps1 -MachineHash "437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564" -IssuedTo "Authorized Client" -ExpiryDate "PERPETUAL"</pre>
+                </div>
+            </div>
+
+            <!-- OUTPUT SECTION 3: Batch Hash Processor -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl mb-8">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2 mb-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-indigo-400"></i>
+                    <span>3. Batch Multi-Hash Processor</span>
+                </h3>
+                <p class="text-xs text-slate-400 mb-4">Paste an entire email or list containing multiple fingerprints to extract and format them at once.</p>
+
+                <textarea id="batch-input" rows="3" placeholder="Paste text containing multiple 64-character hashes here..." oninput="processBatchHashes()" class="w-full px-4 py-3 rounded-xl bg-obsidian-950 border border-slate-800 text-indigo-300 font-mono text-xs uppercase tracking-wider focus:outline-none focus:border-indigo-400 transition placeholder:text-slate-600"></textarea>
+
+                <div id="batch-results-panel" class="mt-4 hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span id="batch-count" class="text-xs font-mono text-emerald-400 font-semibold">0 valid hashes detected</span>
+                        <button onclick="copyText('batch-output-csharp', 'Batch C# copied!')" class="text-xs font-mono text-cyan-400 hover:text-cyan-300">Copy Batch C#</button>
+                    </div>
+                    <pre id="batch-output-csharp" class="p-3.5 rounded-xl bg-obsidian-950 border border-slate-800 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap select-all"></pre>
+                </div>
+            </div>
+
+            <!-- OUTPUT SECTION 4: Saved Whitelist Database -->
+            <div class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                            <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i>
+                            <span>4. Authorized Workstation Database (Offline LocalStorage)</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Persistent local log of clients you've issued access to.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportDatabase()" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-xs font-mono transition flex items-center gap-1">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Export JSON</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs font-mono">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 uppercase text-[11px]">
+                                <th class="py-2 px-3">Date</th>
+                                <th class="py-2 px-3">Client / Company</th>
+                                <th class="py-2 px-3">Machine Hash Fingerprint</th>
+                                <th class="py-2 px-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="whitelist-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-16 border-t border-slate-800/80 bg-obsidian-950 py-8 text-center text-xs font-mono text-slate-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p>© 2026 Surafel Seyoum Demeke — Lefarus Detailing Internal Administrator Studio</p>
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="text-cyan-400 hover:underline">Client Portal</a>
+                    <span>•</span>
+                    <a href="tel:+251913682280" class="text-slate-400">+251 913 682280</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- TOAST POPUP -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-xl bg-obsidian-900 border border-amber-500/50 text-slate-100 shadow-2xl font-mono text-xs">
+        <div class="w-6 h-6 rounded-full bg-amber-950 text-amber-400 flex items-center justify-center shrink-0 border border-amber-700">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+        </div>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const MANAGER_PIN = "2119";
+        let currentHash = "437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564";
+
+        const defaultDatabase = [
+            { hash: "437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564", name: "Primary Dev Workstation (Modern)", date: "2026-10-16" },
+            { hash: "A583BA06F2180D7D689C35ABC8CD053CBAFA18CDE9710566A736DC07F8C25E9D", name: "Authorized Workstation 1", date: "2026-05-12" },
+            { hash: "A8F5F167F44F4964E6C998DEE827110C24B27622C9010C351659132517865766", name: "Authorized Workstation 2", date: "2026-06-20" }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Check if PIN protection is active in sessionStorage
+            const isUnlocked = sessionStorage.getItem('manager_unlocked');
+            if (!isUnlocked) {
+                // Show PIN modal
+                document.getElementById('pin-modal').classList.remove('hidden');
+                document.getElementById('pin-input').focus();
+            }
+
+            document.getElementById('hash-input').value = currentHash;
+            handleHashChange();
+            renderDatabaseTable();
+        });
+
+        function verifyPin() {
+            const entered = document.getElementById('pin-input').value.trim();
+            if (entered === MANAGER_PIN) {
+                sessionStorage.setItem('manager_unlocked', 'true');
+                document.getElementById('pin-modal').classList.add('hidden');
+                showToast("Studio Unlocked");
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        // Enter key in PIN input
+        document.getElementById('pin-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') verifyPin();
+        });
+
+        function lockManagerStudio() {
+            sessionStorage.removeItem('manager_unlocked');
+            document.getElementById('pin-modal').classList.remove('hidden');
+            document.getElementById('pin-input').value = '';
+            document.getElementById('pin-error').classList.add('hidden');
+            document.getElementById('pin-input').focus();
+        }
+
+        function sanitizeHash(input) {
+            if (!input) return '';
+            return input
+                .replace(/\/\/.*$/gm, '')
+                .replace(/["',;\{\}\(\)]/g, '')
+                .replace(/[\s\r\n\t\-]/g, '')
+                .toUpperCase();
+        }
+
+        function handleHashChange() {
+            const rawVal = document.getElementById('hash-input').value;
+            const cleaned = sanitizeHash(rawVal);
+            currentHash = cleaned || '';
+
+            document.getElementById('char-counter').textContent = `${currentHash.length} / 64 characters`;
+
+            // Update chunk grid
+            for (let i = 0; i < 8; i++) {
+                const chunkEl = document.getElementById(`chunk-${i}`);
+                const start = i * 8;
+                if (currentHash && start < currentHash.length) {
+                    const chunk = currentHash.substring(start, start + 8);
+                    chunkEl.textContent = chunk.padEnd(8, '·');
+                    chunkEl.className = chunk.length === 8 
+                        ? "p-2 rounded bg-obsidian-900 border border-amber-500/60 text-center font-mono text-xs font-bold text-amber-300"
+                        : "p-2 rounded bg-obsidian-900 border border-slate-700 text-center font-mono text-xs text-amber-400";
+                } else {
+                    chunkEl.textContent = '--------';
+                    chunkEl.className = "p-2 rounded bg-obsidian-900 border border-slate-800 text-center font-mono text-xs text-slate-600";
+                }
+            }
+
+            updateAllOutputs();
+        }
+
+        function updateAllOutputs() {
+            const hash = currentHash ? currentHash.substring(0, 64) : '437BC711CCA1E6DFE0C86E1E601FBB22284353ADCB46FA69FAA32F8D593D7564';
+            const clientName = document.getElementById('client-name').value.trim() || 'Authorized Workstation';
+            const pcTag = document.getElementById('pc-tag').value.trim();
+            const label = pcTag ? `${clientName} (${pcTag})` : clientName;
+            const expiry = document.getElementById('expiry-select').value;
+            const dateStr = new Date().toISOString().split('T')[0];
+
+            // 1. Single C# Line
+            document.getElementById('csharp-line-output').textContent = `"${hash}", // ${label} - Authorized on ${dateStr}`;
+
+            // 2. Full HashSet Block
+            const fullHashSet = 
+`private static readonly HashSet<string> BuiltInAllowedMachineHashes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+{
+    "${hash}" // ${label} (${dateStr})
+};`;
+            document.getElementById('full-hashset-output').textContent = fullHashSet;
+
+            // 3. PowerShell Command
+            document.getElementById('powershell-cmd-output').textContent = `.\\GenerateLicense.ps1 -MachineHash "${hash}" -IssuedTo "${label}" -ExpiryDate "${expiry}"`;
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                        document.getElementById('hash-input').value = text;
+                        handleHashChange();
+                        showToast("Pasted from clipboard!");
+                        return;
+                    }
+                }
+            } catch {}
+            const text = prompt("Paste Machine Fingerprint:");
+            if (text) {
+                document.getElementById('hash-input').value = text;
+                handleHashChange();
+                showToast("Fingerprint loaded!");
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('hash-input').value = '';
+            document.getElementById('client-name').value = '';
+            document.getElementById('pc-tag').value = '';
+            handleHashChange();
+            showToast("Cleared");
+        }
+
+        function processBatchHashes() {
+            const raw = document.getElementById('batch-input').value;
+            const lines = raw.split(/[\r\n,;]+/);
+            const valid = [];
+
+            for (let line of lines) {
+                const clean = sanitizeHash(line);
+                if (clean.length === 64 && /^[0-9A-F]{64}$/.test(clean)) {
+                    if (!valid.includes(clean)) valid.push(clean);
+                }
+            }
+
+            const panel = document.getElementById('batch-results-panel');
+            if (valid.length > 0) {
+                panel.classList.remove('hidden');
+                document.getElementById('batch-count').textContent = `${valid.length} valid 64-char hash(es) identified`;
+                const csharpLines = valid.map((h, i) => `    "${h}", // Workstation ${i + 1}`).join('\n');
+                document.getElementById('batch-output-csharp').textContent = 
+`// Batch BuiltInAllowedMachineHashes:\n${csharpLines}`;
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        // Database
+        function getDatabase() {
+            try {
+                const stored = localStorage.getItem('manager_workstations');
+                return stored ? JSON.parse(stored) : defaultDatabase;
+            } catch {
+                return defaultDatabase;
+            }
+        }
+
+        function saveActiveWorkstation() {
+            const hash = currentHash ? currentHash.substring(0, 64) : '';
+            if (!hash || hash.length !== 64) {
+                showToast("Please enter a valid 64-char hash first!", true);
+                return;
+            }
+            const clientName = document.getElementById('client-name').value.trim() || 'Workstation';
+            const pcTag = document.getElementById('pc-tag').value.trim();
+            const fullName = pcTag ? `${clientName} (${pcTag})` : clientName;
+
+            const db = getDatabase();
+            const existingIdx = db.findIndex(item => item.hash.toUpperCase() === hash.toUpperCase());
+            const entry = {
+                hash: hash,
+                name: fullName,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            if (existingIdx >= 0) db[existingIdx] = entry;
+            else db.unshift(entry);
+
+            localStorage.setItem('manager_workstations', JSON.stringify(db));
+            renderDatabaseTable();
+            showToast("Saved to database!");
+        }
+
+        function deleteEntry(idx) {
+            const db = getDatabase();
+            db.splice(idx, 1);
+            localStorage.setItem('manager_workstations', JSON.stringify(db));
+            renderDatabaseTable();
+            showToast("Entry removed");
+        }
+
+        function loadEntry(hash, name) {
+            document.getElementById('hash-input').value = hash;
+            document.getElementById('client-name').value = name;
+            handleHashChange();
+            showToast(`Loaded ${name}`);
+        }
+
+        function renderDatabaseTable() {
+            const tbody = document.getElementById('whitelist-table-body');
+            const db = getDatabase();
+            if (!tbody) return;
+
+            if (db.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500">Database is empty.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = db.map((item, idx) => `
+                <tr class="hover:bg-obsidian-900/60 transition group">
+                    <td class="py-2.5 px-3 text-slate-500 text-[11px]">${item.date || 'Active'}</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-200">${item.name}</td>
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-amber-400 select-all">
+                        <span title="${item.hash}">${item.hash.substring(0, 16)}...${item.hash.substring(48)}</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-right space-x-2">
+                        <button onclick="loadEntry('${item.hash}', '${item.name}')" class="text-amber-400 hover:text-amber-300 transition">Load</button>
+                        <button onclick="deleteEntry(${idx})" class="text-slate-500 hover:text-rose-400 transition">×</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function exportDatabase() {
+            const db = getDatabase();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "lefarus_workstations_db.json");
+            dl.click();
+            showToast("Database exported as JSON");
+        }
+
+        function copyText(elementId, msg) {
+            const text = document.getElementById(elementId).textContent;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => showToast(msg));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast(msg);
+            }
+        }
+
+        let toastTimer = null;
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            if (!toast || !msgEl) return;
+
+            msgEl.textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
